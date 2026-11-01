@@ -1,0 +1,34 @@
+const { EmbedBuilder } = require("discord.js");
+const { welcomeChannelId } = require("./config/channels");
+
+module.exports = async function guildMemberAdd(member) {
+  try {
+    const channel = await member.client.channels.fetch(welcomeChannelId);
+
+    if (!channel || !channel.isTextBased() || !channel.guild) {
+      console.error("❌ Der Welcome-Kanal wurde nicht gefunden oder ist kein Textkanal.");
+      return;
+    }
+
+    const embed = new EmbedBuilder()
+      .setColor(0x287BFF)
+      .setTitle("Willkommen bei itsFlu! 💙")
+      .setDescription(
+        `Hey <@${member.id}>! 👋\n\n` +
+        "Willkommen auf meinem Server **itsFlu**! 💙\n\n" +
+        "Mach es dir gemütlich und fühl dich wie zu Hause. " +
+        "Schau dich in Ruhe um und entdecke meinen Shop.\n\n" +
+        "Schön, dass du da bist! 💙"
+      )
+      .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
+      .setFooter({ text: "itsFlu • Chill. Connect. Shop." })
+      .setTimestamp();
+
+    await channel.send({
+      embeds: [embed],
+      allowedMentions: { users: [member.id] }
+    });
+  } catch (error) {
+    console.error("❌ Willkommensnachricht konnte nicht gesendet werden:", error);
+  }
+};
